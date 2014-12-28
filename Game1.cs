@@ -18,6 +18,8 @@ namespace helloWorld
 
 		double fullCircle = 2 * Math.PI;
 
+		int lives = 3;
+
 		Texture2D shipTexture;
 		Entity ship;
 
@@ -136,12 +138,26 @@ namespace helloWorld
 				var asteroidCircle = new Circle (asteroidOrigin, asteroid.texture.Width / 2);
 
 				if (shipCircle.Intersects (asteroidCircle)) {
-					Exit();
+					ShipExplosion ();
 				}
 			}
 
             base.Update(gameTime);
         }
+
+		protected void ShipExplosion() {
+			lives--;
+
+			if (lives < 0) {
+				Exit ();
+			}
+
+			ship.x = screenWidth / 2;
+			ship.y = screenHeight / 2;
+			ship.dx = 0;
+			ship.dy = 0;
+			ship.angle = 0;
+		}
 
 		protected void moveEntity(Entity entity) {
 			entity.x += entity.dx;
