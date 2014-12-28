@@ -187,7 +187,7 @@ namespace helloWorld
 				new Vector2((float)ship.x, 
 				            (float)ship.y);
 
-			var shipCircle = new Circle (shipOrigin, ship.texture.Width / 2);
+			var shipCircle = new Circle (shipOrigin, ship.texture.Width / 2 - 4);
 
 			foreach (var asteroid in asteroids) {
 				moveEntity (asteroid);
@@ -196,7 +196,7 @@ namespace helloWorld
 					new Vector2 ((float)asteroid.x, 
 					             (float)asteroid.y);
 
-				var asteroidCircle = new Circle (asteroidOrigin, asteroid.texture.Width / 2);
+				var asteroidCircle = new Circle (asteroidOrigin, asteroid.texture.Width / 2 - 4);
 
 				if (shipCircle.Intersects (asteroidCircle)) {
 					ShipExplosion ();
@@ -295,7 +295,7 @@ namespace helloWorld
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-           	graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
+           	graphics.GraphicsDevice.Clear(Color.Black);
 		
 			spriteBatch.Begin();
 
