@@ -23,7 +23,7 @@ namespace helloWorld
 		Texture2D shipTexture;
 		Entity ship;
 
-		Texture2D rockTexture0;
+		List<Texture2D> rockTextures = new List<Texture2D> ();
 		List<Entity> asteroids = new List<Entity> ();
 
 		double turnSpeed = 0.1;
@@ -69,13 +69,14 @@ namespace helloWorld
 
 		protected void addNewRock(double x, double y) {
 
-			var tempRock = new Entity ();
+			var tempRock = new Asteroid ();
 			tempRock.x = x;
 			tempRock.y = y;
 			tempRock.dx = rnd.NextDouble () * 2.0 - 1.0;
 			tempRock.dy = rnd.NextDouble () * 2.0 - 1.0;
 			tempRock.dangle = rnd.NextDouble () * 0.02;
-			tempRock.texture = rockTexture0;
+			tempRock.phase = 3;
+			tempRock.texture = rockTextures[tempRock.phase];
 			asteroids.Add (tempRock);
 		}
 
@@ -88,8 +89,17 @@ namespace helloWorld
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+			Texture2D tempTexture;
+
 			shipTexture = Content.Load<Texture2D> ("ship.png");
-			rockTexture0 = Content.Load<Texture2D> ("rock_0.png");
+			tempTexture = Content.Load<Texture2D> ("rock_1.png");
+			rockTextures.Add (tempTexture);
+			tempTexture = Content.Load<Texture2D> ("rock_2.png");
+			rockTextures.Add (tempTexture);
+			tempTexture = Content.Load<Texture2D> ("rock_3.png");
+			rockTextures.Add (tempTexture);
+			tempTexture = Content.Load<Texture2D> ("rock_4.png");
+			rockTextures.Add (tempTexture);
         }
 
         /// <summary>

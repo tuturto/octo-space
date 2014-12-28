@@ -21,4 +21,9 @@ namespace helloWorld
 
 		public Texture2D texture { get; set; }
 	}
+
+	public class Asteroid : Entity
+	{
+		public int phase { get; set; }
+	}
 }
