@@ -27,8 +27,9 @@ namespace helloWorld
 		List<Asteroid> asteroids = new List<Asteroid> ();
 
 		Texture2D bulletTexture;
-		List<Entity> bullets = new List<Entity> ();
+		List<Bullet> bullets = new List<Bullet> ();
 		TimeSpan bulletFired;
+		TimeSpan bulletFlightTime = new TimeSpan (0, 0, 3);
 
 		double turnSpeed = 0.1;
 		int screenWidth = 800;
@@ -139,9 +140,12 @@ namespace helloWorld
 				Shoot (gameTime);
 			}
 
+			bullets.RemoveAll (x => gameTime.TotalGameTime - x.lifeTime > bulletFlightTime);
+
 			foreach (var bullet in bullets) {
 				moveEntity (bullet);
 			}
+
 			moveEntity (ship);
 
 			var shipOrigin =
@@ -169,19 +173,18 @@ namespace helloWorld
 
 		protected void Shoot(GameTime gameTime) {
 
-			var diff = gameTime.TotalGameTime - bulletFired;
-
-			if (diff < new TimeSpan (0, 0, 0, 0, 500)) {
+			if (gameTime.TotalGameTime - bulletFired < new TimeSpan (0, 0, 0, 0, 500)) {
 				return;
 			}
 
-			var bullet = new Entity ();
+			var bullet = new Bullet ();
 			bullet.x = ship.x;
 			bullet.y = ship.y;
 			bullet.angle = ship.angle;
 			bullet.dx = Math.Cos (bullet.angle) * 4;
 			bullet.dy = Math.Sin (bullet.angle) * 4;
 			bullet.texture = bulletTexture;
+			bullet.lifeTime = gameTime.TotalGameTime;
 			bullets.Add (bullet);
 
 			bulletFired = gameTime.TotalGameTime;

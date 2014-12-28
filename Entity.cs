@@ -26,4 +26,9 @@ namespace helloWorld
 	{
 		public int phase { get; set; }
 	}
+
+	public class Bullet : Entity
+	{
+		public TimeSpan lifeTime { get; set; }
+	}
 }
