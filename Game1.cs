@@ -26,8 +26,12 @@ namespace helloWorld
 		List<Texture2D> rockTextures = new List<Texture2D> ();
 		List<Asteroid> asteroids = new List<Asteroid> ();
 
+		List<Asteroid> newAsteroids = new List<Asteroid> ();
+		List<Asteroid> destroyedAsteroids = new List<Asteroid> ();
+
 		Texture2D bulletTexture;
 		List<Bullet> bullets = new List<Bullet> ();
+		List<Bullet> destroyedBullets = new List<Bullet> ();
 		TimeSpan bulletFired;
 		TimeSpan bulletFlightTime = new TimeSpan (0, 0, 3);
 
@@ -144,6 +148,31 @@ namespace helloWorld
 
 			foreach (var bullet in bullets) {
 				moveEntity (bullet);
+
+				var bulletOrigin = 
+					new Vector2 ((float)bullet.x, 
+					             (float)bullet.y);
+
+				var bulletCircle = new Circle (bulletOrigin, bullet.texture.Width / 2);
+
+				foreach (var asteroid in asteroids) {
+					var asteroidOrigin = 
+						new Vector2 ((float)asteroid.x, 
+						             (float)asteroid.y);
+					var asteroidCircle = new Circle (asteroidOrigin, asteroid.texture.Width / 2);
+
+					if (bulletCircle.Intersects (asteroidCircle)) {
+						DestroyAsteroid (asteroid, bullet);
+					}
+				}
+			}
+
+			foreach (var asteroid in destroyedAsteroids) {
+				asteroids.Remove (asteroid);
+			}
+
+			foreach (var bullet in destroyedBullets) {
+				bullets.Remove (bullet);
 			}
 
 			moveEntity (ship);
@@ -170,6 +199,11 @@ namespace helloWorld
 
             base.Update(gameTime);
         }
+
+		protected void DestroyAsteroid(Asteroid asteroid, Bullet bullet) {
+			destroyedAsteroids.Add (asteroid);
+			destroyedBullets.Add (bullet);
+		}
 
 		protected void Shoot(GameTime gameTime) {
 
