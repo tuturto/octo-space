@@ -170,6 +170,12 @@ namespace helloWorld
 			foreach (var asteroid in destroyedAsteroids) {
 				asteroids.Remove (asteroid);
 			}
+			destroyedAsteroids.Clear ();
+
+			foreach (var asteroid in newAsteroids) {
+				asteroids.Add (asteroid);
+			}
+			newAsteroids.Clear ();
 
 			foreach (var bullet in destroyedBullets) {
 				bullets.Remove (bullet);
@@ -203,6 +209,21 @@ namespace helloWorld
 		protected void DestroyAsteroid(Asteroid asteroid, Bullet bullet) {
 			destroyedAsteroids.Add (asteroid);
 			destroyedBullets.Add (bullet);
+
+			if (asteroid.phase > 0) {
+				for (int i = 0; i < 3; i++) {
+					var newAsteroid = new Asteroid ();
+					newAsteroid.x = asteroid.x;
+					newAsteroid.y = asteroid.y;
+					newAsteroid.dx = rnd.NextDouble () * 2.0 - 1.0;
+					newAsteroid.dy = rnd.NextDouble () * 2.0 - 1.0;
+					newAsteroid.dangle = rnd.NextDouble () * 0.02;
+					newAsteroid.phase = asteroid.phase - 1;
+					newAsteroid.texture = rockTextures[newAsteroid.phase];
+
+					newAsteroids.Add (newAsteroid);
+				}
+			}
 		}
 
 		protected void Shoot(GameTime gameTime) {
