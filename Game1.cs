@@ -24,7 +24,11 @@ namespace helloWorld
 		Entity ship;
 
 		List<Texture2D> rockTextures = new List<Texture2D> ();
-		List<Entity> asteroids = new List<Entity> ();
+		List<Asteroid> asteroids = new List<Asteroid> ();
+
+		Texture2D bulletTexture;
+		List<Entity> bullets = new List<Entity> ();
+		TimeSpan bulletFired;
 
 		double turnSpeed = 0.1;
 		int screenWidth = 800;
@@ -92,6 +96,7 @@ namespace helloWorld
 			Texture2D tempTexture;
 
 			shipTexture = Content.Load<Texture2D> ("ship.png");
+			bulletTexture = Content.Load<Texture2D> ("bullet.png");
 			tempTexture = Content.Load<Texture2D> ("rock_1.png");
 			rockTextures.Add (tempTexture);
 			tempTexture = Content.Load<Texture2D> ("rock_2.png");
@@ -130,6 +135,13 @@ namespace helloWorld
 				ship.dy += Math.Sin(ship.angle) * 0.1;
 			}
 
+			if (GamePad.GetState (PlayerIndex.One).Buttons.A == ButtonState.Pressed) {
+				Shoot (gameTime);
+			}
+
+			foreach (var bullet in bullets) {
+				moveEntity (bullet);
+			}
 			moveEntity (ship);
 
 			var shipOrigin =
@@ -154,6 +166,26 @@ namespace helloWorld
 
             base.Update(gameTime);
         }
+
+		protected void Shoot(GameTime gameTime) {
+
+			var diff = gameTime.TotalGameTime - bulletFired;
+
+			if (diff < new TimeSpan (0, 0, 0, 0, 500)) {
+				return;
+			}
+
+			var bullet = new Entity ();
+			bullet.x = ship.x;
+			bullet.y = ship.y;
+			bullet.angle = ship.angle;
+			bullet.dx = Math.Cos (bullet.angle) * 4;
+			bullet.dy = Math.Sin (bullet.angle) * 4;
+			bullet.texture = bulletTexture;
+			bullets.Add (bullet);
+
+			bulletFired = gameTime.TotalGameTime;
+		}
 
 		protected void ShipExplosion() {
 			lives--;
@@ -233,6 +265,22 @@ namespace helloWorld
 				                  sourceRectangle: sourceRectangle,
 				                  color: Color.White,
 				                  rotation: (float)asteroid.angle,
+				                  origin: origin,
+				                  scale: 1.0f,
+				                  effect: SpriteEffects.None,
+				                  depth: 1);
+			}
+
+			foreach (var bullet in bullets) {
+				location = new Vector2((int)bullet.x, (int)bullet.y);
+				sourceRectangle = new Rectangle(0, 0, bullet.texture.Width, bullet.texture.Height);
+				origin = new Vector2(bullet.texture.Width / 2, bullet.texture.Height / 2);
+
+				spriteBatch.Draw (texture: bullet.texture,
+				                  position: location,
+				                  sourceRectangle: sourceRectangle,
+				                  color: Color.White,
+				                  rotation: (float)bullet.angle,
 				                  origin: origin,
 				                  scale: 1.0f,
 				                  effect: SpriteEffects.None,
