@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 
+using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Storage;
@@ -50,6 +51,8 @@ namespace helloWorld
 
 		Random rnd = new Random();
 
+		Song BackgroundMusic;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -95,6 +98,8 @@ namespace helloWorld
 				stars.Add (star);
 			}
 
+			MediaPlayer.IsRepeating = true;
+			MediaPlayer.Play (BackgroundMusic);
         }
 
 		protected void addNewRock(double x, double y) {
@@ -132,6 +137,8 @@ namespace helloWorld
 			starTextures.Add(Content.Load<Texture2D> ("star_1.png"));
 			starTextures.Add(Content.Load<Texture2D> ("star_2.png"));
 			starTextures.Add(Content.Load<Texture2D> ("star_3.png"));
+
+			BackgroundMusic = Content.Load<Song> ("bg.wav");
         }
 
         /// <summary>
