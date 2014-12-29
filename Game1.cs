@@ -56,7 +56,9 @@ namespace helloWorld
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";	            
+            Content.RootDirectory = "Content";	  
+
+			this.Window.Title = "Hello World";
         }
 
         /// <summary>
