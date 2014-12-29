@@ -20,6 +20,10 @@ namespace helloWorld
 
 		int lives = 3;
 
+		double turnSpeed = 0.1;
+		int screenWidth = 800;
+		int screenHeight = 600;
+
 		Texture2D shipTexture;
 		Entity ship;
 
@@ -35,9 +39,13 @@ namespace helloWorld
 		TimeSpan bulletFired;
 		TimeSpan bulletFlightTime = new TimeSpan (0, 0, 3);
 
-		double turnSpeed = 0.1;
-		int screenWidth = 800;
-		int screenHeight = 600;
+		Texture2D starTexture;
+		List<Star> stars = new List<Star> ();
+		double starDistance;
+		double starAngle;
+		double starTurnSpeed = 0.02;
+		TimeSpan starTimer;
+		TimeSpan starPeriod = new TimeSpan (0, 0, 5);
 
 		Random rnd = new Random();
 
@@ -57,6 +65,8 @@ namespace helloWorld
         {
             base.Initialize();
 
+			starDistance = Math.Sqrt (screenWidth * screenWidth + screenHeight * screenHeight);
+
 			graphics.PreferredBackBufferWidth = screenWidth;
 			graphics.PreferredBackBufferHeight = screenHeight;
 			graphics.IsFullScreen = false;
@@ -74,6 +84,16 @@ namespace helloWorld
 			addNewRock (screenWidth - 50, 50);
 			addNewRock (screenWidth - 50, screenHeight - 50);
 			addNewRock (50, screenHeight - 50);
+
+			for (int i = 0; i < 800; i++) {
+				var star = new Star ();
+				star.distance = rnd.NextDouble() * starDistance;
+				star.angle = rnd.NextDouble() * fullCircle;
+				star.speed = rnd.NextDouble () * 3 + 1;
+				star.texture = starTexture;
+				stars.Add (star);
+			}
+
         }
 
 		protected void addNewRock(double x, double y) {
@@ -110,6 +130,8 @@ namespace helloWorld
 			rockTextures.Add (tempTexture);
 			tempTexture = Content.Load<Texture2D> ("rock_4.png");
 			rockTextures.Add (tempTexture);
+
+			starTexture = Content.Load<Texture2D> ("star.png");
         }
 
         /// <summary>
@@ -200,6 +222,22 @@ namespace helloWorld
 
 				if (shipCircle.Intersects (asteroidCircle)) {
 					ShipExplosion ();
+				}
+			}
+
+			if (gameTime.TotalGameTime - starTimer > starPeriod) {
+				var direction = rnd.Next (-1, 1);
+				starTurnSpeed = 0.02 * direction;
+				starTimer = gameTime.TotalGameTime;
+			}
+
+			starAngle += starTurnSpeed;
+
+			foreach (var star in stars) {
+				star.distance += star.speed;
+
+				if (star.distance > starDistance) {
+					star.distance = rnd.NextDouble() * 150;
 				}
 			}
 
@@ -295,13 +333,38 @@ namespace helloWorld
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+			var center = new Vector2 (screenWidth / 2, screenHeight / 2);
+
            	graphics.GraphicsDevice.Clear(Color.Black);
 		
 			spriteBatch.Begin();
 
-			Vector2 location = new Vector2((int)ship.x, (int)ship.y);
-			Rectangle sourceRectangle = new Rectangle(0, 0, ship.texture.Width, ship.texture.Height);
-			Vector2 origin = new Vector2(ship.texture.Width / 2, ship.texture.Height / 2);
+			Vector2 location;
+			Rectangle sourceRectangle;
+			Vector2 origin;
+
+			foreach (var star in stars) {
+
+				location = new Vector2 ((float)(Math.Sin (star.angle + starAngle) * star.distance + center.X),
+				                        (float)(Math.Cos (star.angle + starAngle) * star.distance + center.Y));
+
+				sourceRectangle = new Rectangle(0, 0, star.texture.Width, star.texture.Height);
+				origin = new Vector2(star.texture.Width / 2, star.texture.Height / 2);
+
+				spriteBatch.Draw (texture: star.texture,
+				                  position: location,
+				                  sourceRectangle: sourceRectangle,
+				                  color: Color.White,
+				                  rotation: (float)star.angle,
+				                  origin: origin,
+				                  scale: 1.0f,
+				                  effect: SpriteEffects.None,
+				                  depth: 1);
+			}
+
+			location = new Vector2((int)ship.x, (int)ship.y);
+			sourceRectangle = new Rectangle(0, 0, ship.texture.Width, ship.texture.Height);
+			origin = new Vector2(ship.texture.Width / 2, ship.texture.Height / 2);
 
 			spriteBatch.Draw (texture: ship.texture,
  			                  position: location,
