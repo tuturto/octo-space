@@ -40,6 +40,7 @@ namespace helloWorld
 		TimeSpan bulletFlightTime = new TimeSpan (0, 0, 3);
 
 		Texture2D starTexture;
+		List<Texture2D> starTextures = new List<Texture2D> ();
 		List<Star> stars = new List<Star> ();
 		double starDistance;
 		double starAngle;
@@ -115,23 +116,22 @@ namespace helloWorld
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
-			Texture2D tempTexture;
 
 			shipTexture = Content.Load<Texture2D> ("ship.png");
 			bulletTexture = Content.Load<Texture2D> ("bullet.png");
-			tempTexture = Content.Load<Texture2D> ("rock_1.png");
-			rockTextures.Add (tempTexture);
-			tempTexture = Content.Load<Texture2D> ("rock_2.png");
-			rockTextures.Add (tempTexture);
-			tempTexture = Content.Load<Texture2D> ("rock_3.png");
-			rockTextures.Add (tempTexture);
-			tempTexture = Content.Load<Texture2D> ("rock_4.png");
-			rockTextures.Add (tempTexture);
+
+			rockTextures.Add (Content.Load<Texture2D> ("rock_1.png"));
+			rockTextures.Add (Content.Load<Texture2D> ("rock_2.png"));
+			rockTextures.Add (Content.Load<Texture2D> ("rock_3.png"));
+			rockTextures.Add (Content.Load<Texture2D> ("rock_4.png"));
 
 			starTexture = Content.Load<Texture2D> ("star.png");
+
+			starTextures.Add(Content.Load<Texture2D> ("star_0.png"));
+			starTextures.Add(Content.Load<Texture2D> ("star_1.png"));
+			starTextures.Add(Content.Load<Texture2D> ("star_2.png"));
+			starTextures.Add(Content.Load<Texture2D> ("star_3.png"));
         }
 
         /// <summary>
@@ -327,6 +327,23 @@ namespace helloWorld
 			}
 		}
 
+		protected Texture2D getStarTexture(Star star) {
+			var period = starDistance / 10;
+			if (star.distance < period) {
+				return starTextures [0];
+			}
+
+			if (star.distance < period * 2) {
+				return starTextures [1];
+			}
+
+			if (star.distance < period * 3) {
+				return starTextures [2];
+			}
+
+			return starTextures [3];
+		}
+
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -351,11 +368,11 @@ namespace helloWorld
 				sourceRectangle = new Rectangle(0, 0, star.texture.Width, star.texture.Height);
 				origin = new Vector2(star.texture.Width / 2, star.texture.Height / 2);
 
-				spriteBatch.Draw (texture: star.texture,
+				spriteBatch.Draw (texture: getStarTexture(star),
 				                  position: location,
 				                  sourceRectangle: sourceRectangle,
 				                  color: Color.White,
-				                  rotation: (float)star.angle,
+				                  rotation: 0.0f,
 				                  origin: origin,
 				                  scale: 1.0f,
 				                  effect: SpriteEffects.None,
