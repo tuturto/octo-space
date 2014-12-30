@@ -164,23 +164,24 @@ namespace helloWorld
         protected override void Update(GameTime gameTime)
         {
 			GamePadState gamePadState = GamePad.GetState(PlayerIndex.One);
+			KeyboardState keyboardState = Keyboard.GetState (PlayerIndex.One);
 
             // For Mobile devices, this logic will close the Game when the Back button is pressed
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || keyboardState.IsKeyDown(Keys.Escape))
 			{
 				Exit ();
 			}
 
 			if (state == GameState.Game) {
-				if (gamePadState.ThumbSticks.Left.X < -0.1) {
-					ship.angle += turnSpeed * gamePadState.ThumbSticks.Left.X;
+				if (gamePadState.ThumbSticks.Left.X < -0.1 || keyboardState.IsKeyDown(Keys.Left)) {
+					ship.angle -= turnSpeed;
 				}
 
-				if (gamePadState.ThumbSticks.Left.X > 0.1) {
-					ship.angle += turnSpeed * gamePadState.ThumbSticks.Left.X;
+				if (gamePadState.ThumbSticks.Left.X > 0.1 || keyboardState.IsKeyDown(Keys.Right)) {
+					ship.angle += turnSpeed;
 				}
 
-				if (gamePadState.ThumbSticks.Left.Y > 0.1) {
+				if (gamePadState.ThumbSticks.Left.Y > 0.1 || keyboardState.IsKeyDown(Keys.Up)) {
 					ship.dx += Math.Cos (ship.angle) * 0.1;
 					ship.dy += Math.Sin (ship.angle) * 0.1;
 
@@ -197,11 +198,11 @@ namespace helloWorld
 					}
 				}
 
-				if (GamePad.GetState (PlayerIndex.One).Buttons.A == ButtonState.Pressed) {
+				if (GamePad.GetState (PlayerIndex.One).Buttons.A == ButtonState.Pressed || keyboardState.IsKeyDown(Keys.Space)) {
 					Shoot (gameTime);
 				}
 			} else {
-				if (GamePad.GetState (PlayerIndex.One).Buttons.A == ButtonState.Pressed) {
+				if (GamePad.GetState (PlayerIndex.One).Buttons.A == ButtonState.Pressed || keyboardState.IsKeyDown(Keys.Space)) {
 					spawnRocks ();
 					SpawnShip ();
 					lives = 3;
