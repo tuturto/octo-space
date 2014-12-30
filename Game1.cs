@@ -18,6 +18,7 @@ namespace helloWorld
         SpriteBatch spriteBatch;		
 
 		double fullCircle = 2 * Math.PI;
+		float leftTurn = (float)Math.PI / -2;
 
 		int lives = 3;
 
@@ -83,7 +84,7 @@ namespace helloWorld
 			ship.y = screenHeight / 2;
 			ship.dx = 0;
 			ship.dy = 0;
-			ship.angle = 0;
+			ship.angle = leftTurn;
 			ship.texture = shipTexture;
 
 			addNewRock (50, 50);
@@ -303,7 +304,7 @@ namespace helloWorld
 			ship.y = screenHeight / 2;
 			ship.dx = 0;
 			ship.dy = 0;
-			ship.angle = 0;
+			ship.angle = leftTurn;
 		}
 
 		protected void moveEntity(Entity entity) {
@@ -430,6 +431,22 @@ namespace helloWorld
 				                  rotation: (float)bullet.angle,
 				                  origin: origin,
 				                  scale: 1.0f,
+				                  effect: SpriteEffects.None,
+				                  depth: 1);
+			}
+
+			for (int i = 0; i < lives; i++) {
+				location = new Vector2(ship.texture.Width / 2 * i + 20, ship.texture.Height / 2);
+				sourceRectangle = new Rectangle(0, 0, ship.texture.Width, ship.texture.Height);
+				origin = new Vector2(ship.texture.Width / 2, ship.texture.Height / 2);
+
+				spriteBatch.Draw (texture: ship.texture,
+				                  position: location,
+				                  sourceRectangle: sourceRectangle,
+				                  color: Color.White,
+				                  rotation: leftTurn,
+				                  origin: origin,
+				                  scale: 0.5f,
 				                  effect: SpriteEffects.None,
 				                  depth: 1);
 			}
