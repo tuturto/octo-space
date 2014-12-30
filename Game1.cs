@@ -9,6 +9,11 @@ using Microsoft.Xna.Framework.Input;
 
 namespace helloWorld
 {
+	public enum GameState {
+		MainMenu = 0,
+		Game = 1
+	}
+
 	/// <summary>
     /// This is the main type for your game
     /// </summary>
@@ -20,6 +25,7 @@ namespace helloWorld
 		double fullCircle = 2 * Math.PI;
 		float leftTurn = (float)Math.PI / -2;
 
+		GameState state = GameState.MainMenu;
 		int lives = 3;
 
 		double turnSpeed = 0.1;
@@ -79,14 +85,7 @@ namespace helloWorld
 			graphics.IsFullScreen = false;
 			graphics.ApplyChanges();
 
-			ship = new Entity ();
-			ship.x = screenWidth / 2;
-			ship.y = screenHeight / 2;
-			ship.dx = 0;
-			ship.dy = 0;
-			ship.angle = leftTurn;
-			ship.texture = shipTexture;
-
+			SpawnShip ();
 			spawnRocks ();
 
 			for (int i = 0; i < 800; i++) {
@@ -103,6 +102,7 @@ namespace helloWorld
         }
 
 		protected void spawnRocks() {
+			asteroids.Clear ();
 			addNewRock (50, 50);
 			addNewRock (screenWidth - 50, 50);
 			addNewRock (screenWidth - 50, screenHeight - 50);
@@ -160,24 +160,33 @@ namespace helloWorld
             // For Mobile devices, this logic will close the Game when the Back button is pressed
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
 			{
-				Exit();
+				Exit ();
 			}
 
-			if (gamePadState.ThumbSticks.Left.X < -0.1) {
-				ship.angle += turnSpeed * gamePadState.ThumbSticks.Left.X;
-			}
+			if (state == GameState.Game) {
+				if (gamePadState.ThumbSticks.Left.X < -0.1) {
+					ship.angle += turnSpeed * gamePadState.ThumbSticks.Left.X;
+				}
 
-			if (gamePadState.ThumbSticks.Left.X > 0.1) {
-				ship.angle += turnSpeed * gamePadState.ThumbSticks.Left.X;
-			}
+				if (gamePadState.ThumbSticks.Left.X > 0.1) {
+					ship.angle += turnSpeed * gamePadState.ThumbSticks.Left.X;
+				}
 
-			if (gamePadState.ThumbSticks.Left.Y > 0.1) {
-				ship.dx += Math.Cos(ship.angle) * 0.1;
-				ship.dy += Math.Sin(ship.angle) * 0.1;
-			}
+				if (gamePadState.ThumbSticks.Left.Y > 0.1) {
+					ship.dx += Math.Cos (ship.angle) * 0.1;
+					ship.dy += Math.Sin (ship.angle) * 0.1;
+				}
 
-			if (GamePad.GetState (PlayerIndex.One).Buttons.A == ButtonState.Pressed) {
-				Shoot (gameTime);
+				if (GamePad.GetState (PlayerIndex.One).Buttons.A == ButtonState.Pressed) {
+					Shoot (gameTime);
+				}
+			} else {
+				if (GamePad.GetState (PlayerIndex.One).Buttons.A == ButtonState.Pressed) {
+					spawnRocks ();
+					SpawnShip ();
+					lives = 3;
+					state = GameState.Game;
+				}
 			}
 
 			bullets.RemoveAll (x => gameTime.TotalGameTime - x.lifeTime > bulletFlightTime);
@@ -238,8 +247,11 @@ namespace helloWorld
 
 				var asteroidCircle = new Circle (asteroidOrigin, asteroid.texture.Width / 2 - 4);
 
-				if (shipCircle.Intersects (asteroidCircle)) {
-					ShipExplosion ();
+				if (state == GameState.Game) {
+					if (shipCircle.Intersects (asteroidCircle)) {
+						ShipExplosion ();
+						break;
+					}
 				}
 			}
 
@@ -313,14 +325,22 @@ namespace helloWorld
 			lives--;
 
 			if (lives < 0) {
-				Exit ();
+				state = GameState.MainMenu;
 			}
 
+			SpawnShip ();
+		}
+
+		protected void SpawnShip() {
+			if (ship == null) {
+				ship = new Entity ();
+			}
 			ship.x = screenWidth / 2;
 			ship.y = screenHeight / 2;
 			ship.dx = 0;
 			ship.dy = 0;
 			ship.angle = leftTurn;
+			ship.texture = shipTexture;
 		}
 
 		protected void moveEntity(Entity entity) {
@@ -405,19 +425,21 @@ namespace helloWorld
 				                  depth: 1);
 			}
 
-			location = new Vector2((int)ship.x, (int)ship.y);
-			sourceRectangle = new Rectangle(0, 0, ship.texture.Width, ship.texture.Height);
-			origin = new Vector2(ship.texture.Width / 2, ship.texture.Height / 2);
+			if (state == GameState.Game) {
+				location = new Vector2 ((int)ship.x, (int)ship.y);
+				sourceRectangle = new Rectangle (0, 0, ship.texture.Width, ship.texture.Height);
+				origin = new Vector2 (ship.texture.Width / 2, ship.texture.Height / 2);
 
-			spriteBatch.Draw (texture: ship.texture,
- 			                  position: location,
-			                  sourceRectangle: sourceRectangle,
-			                  color: Color.White,
-			                  rotation: (float)ship.angle,
-			                  origin: origin,
-			                  scale: 1.0f,
-			                  effect: SpriteEffects.None,
-			                  depth: 1);
+				spriteBatch.Draw (texture: ship.texture,
+				                  position: location,
+				                  sourceRectangle: sourceRectangle,
+				                  color: Color.White,
+				                  rotation: (float)ship.angle,
+				                  origin: origin,
+				                  scale: 1.0f,
+				                  effect: SpriteEffects.None,
+				                  depth: 1);
+			}
 
 			foreach (var asteroid in asteroids) {
 				location = new Vector2((int)asteroid.x, (int)asteroid.y);
@@ -451,20 +473,22 @@ namespace helloWorld
 				                  depth: 1);
 			}
 
-			for (int i = 0; i < lives; i++) {
-				location = new Vector2(ship.texture.Width / 2 * i + 20, ship.texture.Height / 2);
-				sourceRectangle = new Rectangle(0, 0, ship.texture.Width, ship.texture.Height);
-				origin = new Vector2(ship.texture.Width / 2, ship.texture.Height / 2);
+			if (state == GameState.Game) {
+				for (int i = 0; i < lives; i++) {
+					location = new Vector2 (ship.texture.Width / 2 * i + 20, ship.texture.Height / 2);
+					sourceRectangle = new Rectangle (0, 0, ship.texture.Width, ship.texture.Height);
+					origin = new Vector2 (ship.texture.Width / 2, ship.texture.Height / 2);
 
-				spriteBatch.Draw (texture: ship.texture,
-				                  position: location,
-				                  sourceRectangle: sourceRectangle,
-				                  color: Color.White,
-				                  rotation: leftTurn,
-				                  origin: origin,
-				                  scale: 0.5f,
-				                  effect: SpriteEffects.None,
-				                  depth: 1);
+					spriteBatch.Draw (texture: ship.texture,
+					                  position: location,
+					                  sourceRectangle: sourceRectangle,
+					                  color: Color.White,
+					                  rotation: leftTurn,
+					                  origin: origin,
+					                  scale: 0.5f,
+					                  effect: SpriteEffects.None,
+					                  depth: 1);
+				}
 			}
 
 			spriteBatch.End();
