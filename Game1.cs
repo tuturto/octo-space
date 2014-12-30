@@ -34,7 +34,7 @@ namespace helloWorld
 
 		Texture2D titleTexture;
 
-		Texture2D shipTexture;
+		Texture2D shipTexture, exhaustTexture;
 		Entity ship;
 
 		List<Texture2D> rockTextures = new List<Texture2D> ();
@@ -48,6 +48,9 @@ namespace helloWorld
 		List<Bullet> destroyedBullets = new List<Bullet> ();
 		TimeSpan bulletFired;
 		TimeSpan bulletFlightTime = new TimeSpan (0, 0, 3);
+
+		List<Bullet> particles = new List<Bullet> ();
+		TimeSpan particleTime = new TimeSpan (0, 0, 0, 0, 500);
 
 		Texture2D starTexture;
 		List<Texture2D> starTextures = new List<Texture2D> ();
@@ -136,6 +139,7 @@ namespace helloWorld
 
 			shipTexture = Content.Load<Texture2D> ("ship.png");
 			bulletTexture = Content.Load<Texture2D> ("bullet.png");
+			exhaustTexture = Content.Load<Texture2D> ("exhaust.png");
 
 			rockTextures.Add (Content.Load<Texture2D> ("rock_1.png"));
 			rockTextures.Add (Content.Load<Texture2D> ("rock_2.png"));
@@ -179,6 +183,18 @@ namespace helloWorld
 				if (gamePadState.ThumbSticks.Left.Y > 0.1) {
 					ship.dx += Math.Cos (ship.angle) * 0.1;
 					ship.dy += Math.Sin (ship.angle) * 0.1;
+
+					for (int i = 0; i < 15; i ++) {
+						var plume = new Bullet ();
+						plume.x = ship.x + Math.Cos (ship.angle) * -25;
+						plume.y = ship.y + Math.Sin (ship.angle) * -25;
+						plume.angle = ship.angle + Math.PI + (rnd.NextDouble () * 1.5 - 0.75);
+						plume.dx = Math.Cos (plume.angle) * rnd.NextDouble();
+						plume.dy = Math.Sin (plume.angle) * rnd.NextDouble();
+						plume.texture = exhaustTexture;
+						plume.lifeTime = gameTime.TotalGameTime;
+						particles.Add (plume);
+					}
 				}
 
 				if (GamePad.GetState (PlayerIndex.One).Buttons.A == ButtonState.Pressed) {
@@ -214,6 +230,12 @@ namespace helloWorld
 						DestroyAsteroid (asteroid, bullet);
 					}
 				}
+			}
+
+			particles.RemoveAll (x => gameTime.TotalGameTime - x.lifeTime > particleTime);
+
+			foreach (var particle in particles) {
+				moveEntity (particle);
 			}
 
 			foreach (var asteroid in destroyedAsteroids) {
@@ -423,6 +445,22 @@ namespace helloWorld
 				                  sourceRectangle: sourceRectangle,
 				                  color: Color.White,
 				                  rotation: 0.0f,
+				                  origin: origin,
+				                  scale: 1.0f,
+				                  effect: SpriteEffects.None,
+				                  depth: 1);
+			}
+
+			foreach (var particle in particles) {
+				location = new Vector2((int)particle.x, (int)particle.y);
+				sourceRectangle = new Rectangle(0, 0, particle.texture.Width, particle.texture.Height);
+				origin = new Vector2(particle.texture.Width / 2, particle.texture.Height / 2);
+
+				spriteBatch.Draw (texture: particle.texture,
+				                  position: location,
+				                  sourceRectangle: sourceRectangle,
+				                  color: Color.White,
+				                  rotation: (float)particle.angle,
 				                  origin: origin,
 				                  scale: 1.0f,
 				                  effect: SpriteEffects.None,
