@@ -87,10 +87,7 @@ namespace helloWorld
 			ship.angle = leftTurn;
 			ship.texture = shipTexture;
 
-			addNewRock (50, 50);
-			addNewRock (screenWidth - 50, 50);
-			addNewRock (screenWidth - 50, screenHeight - 50);
-			addNewRock (50, screenHeight - 50);
+			spawnRocks ();
 
 			for (int i = 0; i < 800; i++) {
 				var star = new Star ();
@@ -104,6 +101,13 @@ namespace helloWorld
 			MediaPlayer.IsRepeating = true;
 			MediaPlayer.Play (BackgroundMusic);
         }
+
+		protected void spawnRocks() {
+			addNewRock (50, 50);
+			addNewRock (screenWidth - 50, 50);
+			addNewRock (screenWidth - 50, screenHeight - 50);
+			addNewRock (50, screenHeight - 50);
+		}
 
 		protected void addNewRock(double x, double y) {
 
@@ -211,6 +215,10 @@ namespace helloWorld
 
 			foreach (var bullet in destroyedBullets) {
 				bullets.Remove (bullet);
+			}
+
+			if (asteroids.Count == 0) {
+				spawnRocks ();
 			}
 
 			moveEntity (ship);
