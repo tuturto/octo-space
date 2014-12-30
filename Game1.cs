@@ -243,6 +243,14 @@ namespace helloWorld
 
 			starAngle += starTurnSpeed;
 
+			if (starAngle > fullCircle) {
+				starAngle -= fullCircle;
+			}
+
+			if (starAngle < 0) {
+				starAngle += fullCircle;
+			}
+
 			foreach (var star in stars) {
 				star.distance += star.speed;
 
