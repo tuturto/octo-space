@@ -32,6 +32,8 @@ namespace helloWorld
 		int screenWidth = 800;
 		int screenHeight = 600;
 
+		Texture2D titleTexture;
+
 		Texture2D shipTexture;
 		Entity ship;
 
@@ -129,6 +131,8 @@ namespace helloWorld
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+
+			titleTexture = Content.Load<Texture2D> ("title.png");
 
 			shipTexture = Content.Load<Texture2D> ("ship.png");
 			bulletTexture = Content.Load<Texture2D> ("bullet.png");
@@ -489,6 +493,20 @@ namespace helloWorld
 					                  effect: SpriteEffects.None,
 					                  depth: 1);
 				}
+			} else {
+				location = new Vector2 (screenWidth / 2, screenHeight / 2);
+				sourceRectangle = new Rectangle (0, 0, titleTexture.Width, titleTexture.Height);
+				origin = new Vector2 (titleTexture.Width / 2, titleTexture.Height / 2);
+
+				spriteBatch.Draw (texture: titleTexture,
+				                  position: location,
+				                  sourceRectangle: sourceRectangle,
+				                  color: Color.White,
+				                  rotation: 0.0f,
+				                  origin: origin,
+				                  scale: 1.0f,
+				                  effect: SpriteEffects.None,
+				                  depth: 1);
 			}
 
 			spriteBatch.End();
