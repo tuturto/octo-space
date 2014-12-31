@@ -169,7 +169,11 @@ namespace helloWorld
             // For Mobile devices, this logic will close the Game when the Back button is pressed
 			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || keyboardState.IsKeyDown(Keys.Escape))
 			{
-				Exit ();
+				if (state == GameState.MainMenu) {
+					Exit ();
+				} else {
+					state = GameState.MainMenu;
+				}
 			}
 
 			if (state == GameState.Game) {
