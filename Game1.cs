@@ -32,6 +32,8 @@ namespace helloWorld
 		int screenWidth = 800;
 		int screenHeight = 600;
 
+		StarField backGround;
+
 		Texture2D titleTexture;
 
 		Texture2D shipTexture, exhaustTexture;
@@ -51,15 +53,6 @@ namespace helloWorld
 
 		List<Bullet> particles = new List<Bullet> ();
 		TimeSpan particleTime = new TimeSpan (0, 0, 0, 0, 500);
-
-		Texture2D starTexture;
-		List<Texture2D> starTextures = new List<Texture2D> ();
-		List<Star> stars = new List<Star> ();
-		double starDistance;
-		double starAngle;
-		double starTurnSpeed = 0.02;
-		TimeSpan starTimer;
-		TimeSpan starPeriod = new TimeSpan (0, 0, 5);
 
 		Random rnd = new Random();
 
@@ -83,8 +76,6 @@ namespace helloWorld
         {
             base.Initialize();
 
-			starDistance = Math.Sqrt (screenWidth * screenWidth + screenHeight * screenHeight);
-
 			graphics.PreferredBackBufferWidth = screenWidth;
 			graphics.PreferredBackBufferHeight = screenHeight;
 			graphics.IsFullScreen = false;
@@ -92,15 +83,6 @@ namespace helloWorld
 
 			SpawnShip ();
 			spawnRocks ();
-
-			for (int i = 0; i < 800; i++) {
-				var star = new Star ();
-				star.distance = rnd.NextDouble() * starDistance;
-				star.angle = rnd.NextDouble() * fullCircle;
-				star.speed = rnd.NextDouble () * 3 + 1;
-				star.texture = starTexture;
-				stars.Add (star);
-			}
 
 			MediaPlayer.IsRepeating = true;
 			MediaPlayer.Play (BackgroundMusic);
@@ -146,14 +128,16 @@ namespace helloWorld
 			rockTextures.Add (Content.Load<Texture2D> ("rock_3.png"));
 			rockTextures.Add (Content.Load<Texture2D> ("rock_4.png"));
 
-			starTexture = Content.Load<Texture2D> ("star.png");
-
+			var starTextures = new List<Texture2D> ();
 			starTextures.Add(Content.Load<Texture2D> ("star_0.png"));
 			starTextures.Add(Content.Load<Texture2D> ("star_1.png"));
 			starTextures.Add(Content.Load<Texture2D> ("star_2.png"));
 			starTextures.Add(Content.Load<Texture2D> ("star_3.png"));
 
 			BackgroundMusic = Content.Load<Song> ("bg.wav");
+
+			backGround = new StarField (rnd, screenWidth, screenHeight, starTextures);
+			backGround.Init ();
         }
 
         /// <summary>
@@ -286,29 +270,7 @@ namespace helloWorld
 				}
 			}
 
-			if (gameTime.TotalGameTime - starTimer > starPeriod) {
-				var direction = rnd.Next (-1, 1);
-				starTurnSpeed = 0.02 * direction;
-				starTimer = gameTime.TotalGameTime;
-			}
-
-			starAngle += starTurnSpeed;
-
-			if (starAngle > fullCircle) {
-				starAngle -= fullCircle;
-			}
-
-			if (starAngle < 0) {
-				starAngle += fullCircle;
-			}
-
-			foreach (var star in stars) {
-				star.distance += star.speed;
-
-				if (star.distance > starDistance) {
-					star.distance = rnd.NextDouble() * 150;
-				}
-			}
+			backGround.Update (gameTime);
 
             base.Update(gameTime);
         }
@@ -404,31 +366,12 @@ namespace helloWorld
 			}
 		}
 
-		protected Texture2D getStarTexture(Star star) {
-			var period = starDistance / 10;
-			if (star.distance < period) {
-				return starTextures [0];
-			}
-
-			if (star.distance < period * 2) {
-				return starTextures [1];
-			}
-
-			if (star.distance < period * 3) {
-				return starTextures [2];
-			}
-
-			return starTextures [3];
-		}
-
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-			var center = new Vector2 (screenWidth / 2, screenHeight / 2);
-
            	graphics.GraphicsDevice.Clear(Color.Black);
 		
 			spriteBatch.Begin();
@@ -437,24 +380,7 @@ namespace helloWorld
 			Rectangle sourceRectangle;
 			Vector2 origin;
 
-			foreach (var star in stars) {
-
-				location = new Vector2 ((float)(Math.Sin (star.angle + starAngle) * star.distance + center.X),
-				                        (float)(Math.Cos (star.angle + starAngle) * star.distance + center.Y));
-
-				sourceRectangle = new Rectangle(0, 0, star.texture.Width, star.texture.Height);
-				origin = new Vector2(star.texture.Width / 2, star.texture.Height / 2);
-
-				spriteBatch.Draw (texture: getStarTexture(star),
-				                  position: location,
-				                  sourceRectangle: sourceRectangle,
-				                  color: Color.White,
-				                  rotation: 0.0f,
-				                  origin: origin,
-				                  scale: 1.0f,
-				                  effect: SpriteEffects.None,
-				                  depth: 1);
-			}
+			backGround.Draw (gameTime, spriteBatch);
 
 			foreach (var particle in particles) {
 				location = new Vector2((int)particle.x, (int)particle.y);

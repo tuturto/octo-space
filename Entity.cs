@@ -7,7 +7,7 @@ namespace helloWorld
 	public interface IEntity
 	{
 		void Update (GameTime gameTime);
-		void Draw (GameTime gameTime);
+		void Draw (GameTime gameTime, SpriteBatch spriteBatch);
 	}
 	
 	public class Entity
@@ -43,7 +43,5 @@ namespace helloWorld
 		public double distance { get; set; }
 		public double angle { get; set; }
 		public double speed { get; set; }
-
-		public Texture2D texture { get; set; }
 	}
 }
