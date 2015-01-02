@@ -26,6 +26,22 @@ namespace helloWorld
 		public double dangle { get; set; }
 
 		public Texture2D texture { get; set; }
+
+		public void Draw(SpriteBatch spriteBatch) {
+			var location = new Vector2((int)x, (int)y);
+			var sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
+			var origin = new Vector2(texture.Width / 2, texture.Height / 2);
+
+			spriteBatch.Draw (texture: texture,
+			                  position: location,
+			                  sourceRectangle: sourceRectangle,
+			                  color: Color.White,
+			                  rotation: (float)angle,
+			                  origin: origin,
+			                  scale: 1.0f,
+			                  effect: SpriteEffects.None,
+			                  depth: 1);
+		}
 	}
 
 	public class Asteroid : Entity

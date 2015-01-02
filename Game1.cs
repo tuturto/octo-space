@@ -383,67 +383,19 @@ namespace helloWorld
 			backGround.Draw (gameTime, spriteBatch);
 
 			foreach (var particle in particles) {
-				location = new Vector2((int)particle.x, (int)particle.y);
-				sourceRectangle = new Rectangle(0, 0, particle.texture.Width, particle.texture.Height);
-				origin = new Vector2(particle.texture.Width / 2, particle.texture.Height / 2);
-
-				spriteBatch.Draw (texture: particle.texture,
-				                  position: location,
-				                  sourceRectangle: sourceRectangle,
-				                  color: Color.White,
-				                  rotation: (float)particle.angle,
-				                  origin: origin,
-				                  scale: 1.0f,
-				                  effect: SpriteEffects.None,
-				                  depth: 1);
+				particle.Draw (spriteBatch);
 			}
 
 			if (state == GameState.Game) {
-				location = new Vector2 ((int)ship.x, (int)ship.y);
-				sourceRectangle = new Rectangle (0, 0, ship.texture.Width, ship.texture.Height);
-				origin = new Vector2 (ship.texture.Width / 2, ship.texture.Height / 2);
-
-				spriteBatch.Draw (texture: ship.texture,
-				                  position: location,
-				                  sourceRectangle: sourceRectangle,
-				                  color: Color.White,
-				                  rotation: (float)ship.angle,
-				                  origin: origin,
-				                  scale: 1.0f,
-				                  effect: SpriteEffects.None,
-				                  depth: 1);
+				ship.Draw (spriteBatch);
 			}
 
 			foreach (var asteroid in asteroids) {
-				location = new Vector2((int)asteroid.x, (int)asteroid.y);
-				sourceRectangle = new Rectangle(0, 0, asteroid.texture.Width, asteroid.texture.Height);
-				origin = new Vector2(asteroid.texture.Width / 2, asteroid.texture.Height / 2);
-
-				spriteBatch.Draw (texture: asteroid.texture,
-				                  position: location,
-				                  sourceRectangle: sourceRectangle,
-				                  color: Color.White,
-				                  rotation: (float)asteroid.angle,
-				                  origin: origin,
-				                  scale: 1.0f,
-				                  effect: SpriteEffects.None,
-				                  depth: 1);
+				asteroid.Draw (spriteBatch);
 			}
 
 			foreach (var bullet in bullets) {
-				location = new Vector2((int)bullet.x, (int)bullet.y);
-				sourceRectangle = new Rectangle(0, 0, bullet.texture.Width, bullet.texture.Height);
-				origin = new Vector2(bullet.texture.Width / 2, bullet.texture.Height / 2);
-
-				spriteBatch.Draw (texture: bullet.texture,
-				                  position: location,
-				                  sourceRectangle: sourceRectangle,
-				                  color: Color.White,
-				                  rotation: (float)bullet.angle,
-				                  origin: origin,
-				                  scale: 1.0f,
-				                  effect: SpriteEffects.None,
-				                  depth: 1);
+				bullet.Draw (spriteBatch);
 			}
 
 			if (state == GameState.Game) {
