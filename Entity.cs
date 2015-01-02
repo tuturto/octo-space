@@ -7,7 +7,7 @@ namespace helloWorld
 	public interface IEntity
 	{
 		void Update (GameTime gameTime);
-		void Draw (GameTime gameTime, SpriteBatch spriteBatch);
+		void Draw (SpriteBatch spriteBatch);
 	}
 	
 	public class Entity

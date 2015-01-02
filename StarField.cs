@@ -65,7 +65,7 @@ namespace helloWorld
 			}
 		}
 
-		public void Draw(GameTime gameTime, SpriteBatch spriteBatch) {
+		public void Draw(SpriteBatch spriteBatch) {
 
 			var center = new Vector2 (screenWidth / 2, screenHeight / 2);
 

@@ -380,7 +380,7 @@ namespace helloWorld
 			Rectangle sourceRectangle;
 			Vector2 origin;
 
-			backGround.Draw (gameTime, spriteBatch);
+			backGround.Draw (spriteBatch);
 
 			foreach (var particle in particles) {
 				particle.Draw (spriteBatch);
