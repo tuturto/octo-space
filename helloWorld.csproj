@@ -55,6 +55,7 @@
     <Compile Include="Entity.cs" />
     <Compile Include="Circle.cs" />
     <Compile Include="StarField.cs" />
+    <Compile Include="Thruster.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\" />

@@ -51,10 +51,9 @@ namespace helloWorld
 		TimeSpan bulletFired;
 		TimeSpan bulletFlightTime = new TimeSpan (0, 0, 3);
 
-		List<Bullet> particles = new List<Bullet> ();
-		TimeSpan particleTime = new TimeSpan (0, 0, 0, 0, 500);
+		Thruster thruster;
 
-		Random rnd = new Random();
+		Random rng = new Random();
 
 		Song BackgroundMusic;
 
@@ -101,9 +100,9 @@ namespace helloWorld
 			var tempRock = new Asteroid ();
 			tempRock.x = x;
 			tempRock.y = y;
-			tempRock.dx = rnd.NextDouble () * 2.0 - 1.0;
-			tempRock.dy = rnd.NextDouble () * 2.0 - 1.0;
-			tempRock.dangle = rnd.NextDouble () * 0.02;
+			tempRock.dx = rng.NextDouble () * 2.0 - 1.0;
+			tempRock.dy = rng.NextDouble () * 2.0 - 1.0;
+			tempRock.dangle = rng.NextDouble () * 0.02;
 			tempRock.phase = 3;
 			tempRock.texture = rockTextures[tempRock.phase];
 			asteroids.Add (tempRock);
@@ -136,8 +135,10 @@ namespace helloWorld
 
 			BackgroundMusic = Content.Load<Song> ("bg.wav");
 
-			backGround = new StarField (rnd, screenWidth, screenHeight, starTextures);
+			backGround = new StarField (rng, screenWidth, screenHeight, starTextures);
 			backGround.Init ();
+
+			thruster = new Thruster (rng, exhaustTexture);
         }
 
         /// <summary>
@@ -173,17 +174,11 @@ namespace helloWorld
 					ship.dx += Math.Cos (ship.angle) * 0.1;
 					ship.dy += Math.Sin (ship.angle) * 0.1;
 
-					for (int i = 0; i < 15; i ++) {
-						var plume = new Bullet ();
-						plume.x = ship.x + Math.Cos (ship.angle) * -25;
-						plume.y = ship.y + Math.Sin (ship.angle) * -25;
-						plume.angle = ship.angle + Math.PI + (rnd.NextDouble () * 1.5 - 0.75);
-						plume.dx = Math.Cos (plume.angle) * rnd.NextDouble();
-						plume.dy = Math.Sin (plume.angle) * rnd.NextDouble();
-						plume.texture = exhaustTexture;
-						plume.lifeTime = gameTime.TotalGameTime;
-						particles.Add (plume);
-					}
+					thruster.x = ship.x + Math.Cos (ship.angle) * -25;
+					thruster.y = ship.y + Math.Sin (ship.angle) * -25;
+					thruster.angle = ship.angle + Math.PI;
+
+					thruster.Emit (gameTime);
 				}
 
 				if (GamePad.GetState (PlayerIndex.One).Buttons.A == ButtonState.Pressed || keyboardState.IsKeyDown(Keys.Space)) {
@@ -221,11 +216,7 @@ namespace helloWorld
 				}
 			}
 
-			particles.RemoveAll (x => gameTime.TotalGameTime - x.lifeTime > particleTime);
-
-			foreach (var particle in particles) {
-				moveEntity (particle);
-			}
+			thruster.Update (gameTime);
 
 			foreach (var asteroid in destroyedAsteroids) {
 				asteroids.Remove (asteroid);
@@ -284,9 +275,9 @@ namespace helloWorld
 					var newAsteroid = new Asteroid ();
 					newAsteroid.x = asteroid.x;
 					newAsteroid.y = asteroid.y;
-					newAsteroid.dx = rnd.NextDouble () * 2.0 - 1.0;
-					newAsteroid.dy = rnd.NextDouble () * 2.0 - 1.0;
-					newAsteroid.dangle = rnd.NextDouble () * 0.02;
+					newAsteroid.dx = rng.NextDouble () * 2.0 - 1.0;
+					newAsteroid.dy = rng.NextDouble () * 2.0 - 1.0;
+					newAsteroid.dangle = rng.NextDouble () * 0.02;
 					newAsteroid.phase = asteroid.phase - 1;
 					newAsteroid.texture = rockTextures[newAsteroid.phase];
 
@@ -382,9 +373,7 @@ namespace helloWorld
 
 			backGround.Draw (spriteBatch);
 
-			foreach (var particle in particles) {
-				particle.Draw (spriteBatch);
-			}
+			thruster.Draw (spriteBatch);
 
 			if (state == GameState.Game) {
 				ship.Draw (spriteBatch);
