@@ -237,6 +237,7 @@ namespace helloWorld
 				bullets.Remove (bullet);
 			}
 
+			particles.RemoveAll (x => x.Done);
 			foreach (var emitter in particles) {
 				emitter.Update (gameTime);
 			}
