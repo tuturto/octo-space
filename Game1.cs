@@ -86,6 +86,7 @@ namespace helloWorld
 
 			MediaPlayer.IsRepeating = true;
 			MediaPlayer.Play (BackgroundMusic);
+			MediaPlayer.Volume = 0.1f;
         }
 
 		protected void spawnRocks() {
