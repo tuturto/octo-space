@@ -318,6 +318,10 @@ namespace helloWorld
 		protected void ShipExplosion(GameTime gameTime) {
 
 			var explosion = new Explosion (rng, bulletTexture, movement) {
+                ParticleCount = 15,
+                ParticleSpeed = 3,
+                ParticleLifeTime = new TimeSpan (0, 0, 0, 0, 1250),
+                EmitterLifeTime = new TimeSpan(0, 0, 0, 0, 150),
 				x = ship.x,
 				y = ship.y
 			};

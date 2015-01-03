@@ -11,13 +11,12 @@ namespace helloWorld
 		public Explosion (Random rng, Texture2D texture, IScreenMovement movement)
 		{
 			particles = new List<Bullet> ();
-			particleTime = new TimeSpan (0, 0, 0, 0, 750);
+
 			this.rng = rng;
 			this.texture = texture;
 			this.movement = movement;
 		}
 
-		protected TimeSpan emitterLifeTime = new TimeSpan(0, 0, 0, 0, 250);
 		protected TimeSpan startTime = TimeSpan.MinValue;
 
 		protected Random rng;
@@ -25,10 +24,14 @@ namespace helloWorld
 		protected IScreenMovement movement;
 
 		protected List<Bullet> particles;
-		protected TimeSpan particleTime;
 
 		public double x { get; set; }
 		public double y { get; set; }
+
+        public int ParticleCount { get; set; }
+        public int ParticleSpeed { get; set; }
+        public TimeSpan EmitterLifeTime { get; set; }
+        public TimeSpan ParticleLifeTime { get; set; }
 
 		public void Emit(GameTime gameTime) {
 			startTime = gameTime.TotalGameTime;
@@ -37,13 +40,13 @@ namespace helloWorld
 		}
 
 		private void SpawnShrapnel(GameTime gameTime) {
-			for (int i = 0; i < 10; i ++) {
+			for (int i = 0; i < ParticleCount; i ++) {
 				var sharpnel = new Bullet ();
 				sharpnel.x = x;
 				sharpnel.y = y;
 				sharpnel.angle = rng.NextDouble () * 2 * Math.PI;
-				sharpnel.dx = 5 * Math.Cos (sharpnel.angle) * rng.NextDouble();
-				sharpnel.dy = 5 * Math.Sin (sharpnel.angle) * rng.NextDouble();
+				sharpnel.dx = ParticleSpeed * Math.Cos (sharpnel.angle) * rng.NextDouble();
+                sharpnel.dy = ParticleSpeed * Math.Sin (sharpnel.angle) * rng.NextDouble();
 				sharpnel.texture = texture;
 				sharpnel.lifeTime = gameTime.TotalGameTime;
 				particles.Add (sharpnel);
@@ -57,11 +60,11 @@ namespace helloWorld
 		}
 
 		public void Update(GameTime gameTime) {
-			if (gameTime.TotalGameTime - startTime < emitterLifeTime) {
+			if (gameTime.TotalGameTime - startTime < EmitterLifeTime) {
 				SpawnShrapnel (gameTime);
 			}
 
-			particles.RemoveAll (x => gameTime.TotalGameTime - x.lifeTime > particleTime);
+			particles.RemoveAll (x => gameTime.TotalGameTime - x.lifeTime > ParticleLifeTime);
 
 			foreach (var particle in particles) {
 				movement.MoveEntity (particle);
