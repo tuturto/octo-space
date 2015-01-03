@@ -57,6 +57,7 @@
     <Compile Include="StarField.cs" />
     <Compile Include="Thruster.cs" />
     <Compile Include="DonutSpace.cs" />
+    <Compile Include="Explosion.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\" />

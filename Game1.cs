@@ -54,6 +54,8 @@ namespace helloWorld
 
 		Thruster thruster;
 
+		List<IParticleEmitter> particles = new List<IParticleEmitter> ();
+
 		Random rng = new Random();
 
 		Song BackgroundMusic;
@@ -235,6 +237,10 @@ namespace helloWorld
 				bullets.Remove (bullet);
 			}
 
+			foreach (var emitter in particles) {
+				emitter.Update (gameTime);
+			}
+
 			if (asteroids.Count == 0) {
 				spawnRocks ();
 			}
@@ -258,7 +264,7 @@ namespace helloWorld
 
 				if (state == GameState.Game) {
 					if (shipCircle.Intersects (asteroidCircle)) {
-						ShipExplosion ();
+						ShipExplosion (gameTime);
 						break;
 					}
 				}
@@ -308,7 +314,16 @@ namespace helloWorld
 			bulletFired = gameTime.TotalGameTime;
 		}
 
-		protected void ShipExplosion() {
+		protected void ShipExplosion(GameTime gameTime) {
+
+			var explosion = new Explosion (rng, bulletTexture, movement) {
+				x = ship.x,
+				y = ship.y
+			};
+
+			explosion.Emit (gameTime);
+			particles.Add (explosion);
+
 			lives--;
 
 			if (lives < 0) {
@@ -358,6 +373,10 @@ namespace helloWorld
 
 			foreach (var bullet in bullets) {
 				bullet.Draw (spriteBatch);
+			}
+
+			foreach (var emitter in particles) {
+				emitter.Draw (spriteBatch);
 			}
 
 			if (state == GameState.Game) {

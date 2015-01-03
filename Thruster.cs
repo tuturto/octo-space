@@ -6,12 +6,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace helloWorld
 {
-	public interface IParticleEmitter
+	public interface IParticleEmitter : IEntity
 	{
 		void Emit(GameTime gameTime);
+
+		bool Done { get; }
 	}
 
-	public class Thruster : IParticleEmitter, IEntity
+	public class Thruster : IParticleEmitter
 	{
 		public Thruster (Random rng, Texture2D texture, IScreenMovement movement)
 		{
@@ -44,6 +46,12 @@ namespace helloWorld
 				plume.texture = texture;
 				plume.lifeTime = gameTime.TotalGameTime;
 				particles.Add (plume);
+			}
+		}
+
+		public bool Done {
+			get {
+				return false;
 			}
 		}
 
