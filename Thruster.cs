@@ -13,16 +13,18 @@ namespace helloWorld
 
 	public class Thruster : IParticleEmitter, IEntity
 	{
-		public Thruster (Random rng, Texture2D texture)
+		public Thruster (Random rng, Texture2D texture, IScreenMovement movement)
 		{
 			particles = new List<Bullet> ();
 			particleTime = new TimeSpan (0, 0, 0, 0, 500);
 			this.rng = rng;
 			this.texture = texture;
+			this.movement = movement;
 		}
 
 		protected Random rng;
 		protected Texture2D texture;
+		protected IScreenMovement movement;
 
 		protected List<Bullet> particles;
 		protected TimeSpan particleTime;
@@ -49,44 +51,13 @@ namespace helloWorld
 			particles.RemoveAll (x => gameTime.TotalGameTime - x.lifeTime > particleTime);
 
 			foreach (var particle in particles) {
-				moveEntity (particle);
+				movement.MoveEntity (particle);
 			}
 		}
 
 		public void Draw(SpriteBatch spriteBatch) {
 			foreach (var particle in particles) {
 				particle.Draw (spriteBatch);
-			}
-		}
-
-		//TODO: duplicate code
-		protected void moveEntity(Entity entity) {
-			entity.x += entity.dx;
-			entity.y += entity.dy;
-			entity.angle += entity.dangle;
-
-			if (entity.x < 0 - entity.texture.Width / 2) {
-				entity.x = 800 + entity.texture.Width / 2;
-			}
-
-			if (entity.x > 800 + entity.texture.Width / 2) {
-				entity.x = 0 - entity.texture.Width / 2;
-			}
-
-			if (entity.y < 0 - entity.texture.Height / 2) {
-				entity.y = 600 + entity.texture.Height / 2;
-			}
-
-			if (entity.y > 600 + entity.texture.Height / 2) {
-				entity.y = 0 - entity.texture.Height / 2;
-			}
-
-			if (entity.angle > 2 * Math.PI) {
-				entity.angle -= 2 * Math.PI;
-			}
-
-			if (entity.angle < 0) {
-				entity.angle += 2 * Math.PI;
 			}
 		}
 	}

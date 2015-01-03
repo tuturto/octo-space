@@ -22,7 +22,6 @@ namespace helloWorld
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;		
 
-		double fullCircle = 2 * Math.PI;
 		float leftTurn = (float)Math.PI / -2;
 
 		GameState state = GameState.MainMenu;
@@ -31,6 +30,8 @@ namespace helloWorld
 		double turnSpeed = 0.1;
 		int screenWidth = 800;
 		int screenHeight = 600;
+
+		IScreenMovement movement;
 
 		StarField backGround;
 
@@ -138,7 +139,8 @@ namespace helloWorld
 			backGround = new StarField (rng, screenWidth, screenHeight, starTextures);
 			backGround.Init ();
 
-			thruster = new Thruster (rng, exhaustTexture);
+			movement = new DonutSpace(screenWidth, screenHeight);
+			thruster = new Thruster (rng, exhaustTexture, movement);
         }
 
         /// <summary>
@@ -196,7 +198,7 @@ namespace helloWorld
 			bullets.RemoveAll (x => gameTime.TotalGameTime - x.lifeTime > bulletFlightTime);
 
 			foreach (var bullet in bullets) {
-				moveEntity (bullet);
+				movement.MoveEntity (bullet);
 
 				var bulletOrigin = 
 					new Vector2 ((float)bullet.x, 
@@ -236,7 +238,7 @@ namespace helloWorld
 				spawnRocks ();
 			}
 
-			moveEntity (ship);
+			movement.MoveEntity (ship);
 
 			var shipOrigin =
 				new Vector2((float)ship.x, 
@@ -245,7 +247,7 @@ namespace helloWorld
 			var shipCircle = new Circle (shipOrigin, ship.texture.Width / 2 - 4);
 
 			foreach (var asteroid in asteroids) {
-				moveEntity (asteroid);
+				movement.MoveEntity (asteroid);
 
 				var asteroidOrigin = 
 					new Vector2 ((float)asteroid.x, 
@@ -325,36 +327,6 @@ namespace helloWorld
 			ship.dy = 0;
 			ship.angle = leftTurn;
 			ship.texture = shipTexture;
-		}
-
-		protected void moveEntity(Entity entity) {
-			entity.x += entity.dx;
-			entity.y += entity.dy;
-			entity.angle += entity.dangle;
-
-			if (entity.x < 0 - entity.texture.Width / 2) {
-				entity.x = screenWidth + entity.texture.Width / 2;
-			}
-
-			if (entity.x > screenWidth + entity.texture.Width / 2) {
-				entity.x = 0 - entity.texture.Width / 2;
-			}
-
-			if (entity.y < 0 - entity.texture.Height / 2) {
-				entity.y = screenHeight + entity.texture.Height / 2;
-			}
-
-			if (entity.y > screenHeight + entity.texture.Height / 2) {
-				entity.y = 0 - entity.texture.Height / 2;
-			}
-
-			if (entity.angle > fullCircle) {
-				entity.angle -= fullCircle;
-			}
-
-			if (entity.angle < 0) {
-				entity.angle += fullCircle;
-			}
 		}
 
         /// <summary>
