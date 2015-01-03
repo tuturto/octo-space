@@ -8,7 +8,7 @@ namespace helloWorld
 {
     static class Program
     {
-        private static Game1 game;
+        private static Main game;
 
         /// <summary>
         /// The main entry point for the application.
@@ -16,7 +16,7 @@ namespace helloWorld
         [STAThread]
         static void Main()
         {
-            game = new Game1();
+			game = new Main();
             game.Run();
         }
     }

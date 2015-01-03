@@ -49,7 +49,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Game1.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entity.cs" />
@@ -58,6 +57,8 @@
     <Compile Include="Thruster.cs" />
     <Compile Include="DonutSpace.cs" />
     <Compile Include="Explosion.cs" />
+    <Compile Include="IParticleEmitter.cs" />
+    <Compile Include="Main.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\" />

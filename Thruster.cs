@@ -6,13 +6,6 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace helloWorld
 {
-	public interface IParticleEmitter : IEntity
-	{
-		void Emit(GameTime gameTime);
-
-		bool Done { get; }
-	}
-
 	public class Thruster : IParticleEmitter
 	{
 		public Thruster (Random rng, Texture2D texture, IScreenMovement movement)

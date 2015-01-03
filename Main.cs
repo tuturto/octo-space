@@ -17,7 +17,7 @@ namespace helloWorld
 	/// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class Game1 : Game
+    public class Main : Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;		
@@ -60,7 +60,7 @@ namespace helloWorld
 
 		Song BackgroundMusic;
 
-        public Game1()
+        public Main()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";	  
