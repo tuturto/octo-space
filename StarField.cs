@@ -26,8 +26,10 @@ namespace helloWorld
 		private double starDistance;
 		private double starAngle;
 		private double starTurnSpeed = 0.02;
+		private double starTargetSpeed = 0.0;
+		private double starCurrentSpeed = 0.0;
 		private TimeSpan starTimer;
-		private TimeSpan starPeriod = new TimeSpan (0, 0, 5);
+		private TimeSpan starPeriod = new TimeSpan (0, 0, 2);
 
 		public void Init() {
 			for (int i = 0; i < 800; i++) {
@@ -41,12 +43,20 @@ namespace helloWorld
 
 		public void Update(GameTime gameTime) {
 			if (gameTime.TotalGameTime - starTimer > starPeriod) {
-				var direction = rng.Next (-1, 1);
-				starTurnSpeed = 0.02 * direction;
+				var direction = rng.Next(-1, 2);
+				starTargetSpeed = (double)starTurnSpeed * direction;
 				starTimer = gameTime.TotalGameTime;
 			}
 
-			starAngle += starTurnSpeed;
+			if (starCurrentSpeed < starTargetSpeed) {
+				starCurrentSpeed += 0.0005;
+			} 
+
+			if (starCurrentSpeed > starTargetSpeed) {
+				starCurrentSpeed -= 0.0005;
+			} 
+
+			starAngle += starCurrentSpeed;
 
 			if (starAngle > 2 * Math.PI) {
 				starAngle -= 2 * Math.PI;
