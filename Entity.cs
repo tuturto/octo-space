@@ -51,7 +51,7 @@ namespace helloWorld
 
 	public class Bullet : Entity
 	{
-		public TimeSpan lifeTime { get; set; }
+		public TimeSpan SpawnTime { get; set; }
 	}
 
 	public class Star

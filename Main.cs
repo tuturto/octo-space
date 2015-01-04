@@ -198,7 +198,7 @@ namespace helloWorld
 				}
 			}
 
-			bullets.RemoveAll (x => gameTime.TotalGameTime - x.lifeTime > bulletFlightTime);
+			bullets.RemoveAll (x => gameTime.TotalGameTime - x.SpawnTime > bulletFlightTime);
 
 			foreach (var bullet in bullets) {
 				movement.MoveEntity (bullet);
@@ -309,7 +309,7 @@ namespace helloWorld
 			bullet.dx = Math.Cos (bullet.angle) * 4;
 			bullet.dy = Math.Sin (bullet.angle) * 4;
 			bullet.texture = bulletTexture;
-			bullet.lifeTime = gameTime.TotalGameTime;
+			bullet.SpawnTime = gameTime.TotalGameTime;
 			bullets.Add (bullet);
 
 			bulletFired = gameTime.TotalGameTime;

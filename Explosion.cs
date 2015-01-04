@@ -48,7 +48,7 @@ namespace helloWorld
 				sharpnel.dx = ParticleSpeed * Math.Cos (sharpnel.angle) * rng.NextDouble();
                 sharpnel.dy = ParticleSpeed * Math.Sin (sharpnel.angle) * rng.NextDouble();
 				sharpnel.texture = texture;
-				sharpnel.lifeTime = gameTime.TotalGameTime;
+				sharpnel.SpawnTime = gameTime.TotalGameTime;
 				particles.Add (sharpnel);
 			}
 		}
@@ -64,7 +64,7 @@ namespace helloWorld
 				SpawnShrapnel (gameTime);
 			}
 
-			particles.RemoveAll (x => gameTime.TotalGameTime - x.lifeTime > ParticleLifeTime);
+			particles.RemoveAll (x => gameTime.TotalGameTime - x.SpawnTime > ParticleLifeTime);
 
 			foreach (var particle in particles) {
 				movement.MoveEntity (particle);
