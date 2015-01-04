@@ -47,8 +47,8 @@ namespace helloWorld
 		List<Asteroid> destroyedAsteroids = new List<Asteroid> ();
 
 		Texture2D bulletTexture;
-		List<Bullet> bullets = new List<Bullet> ();
-		List<Bullet> destroyedBullets = new List<Bullet> ();
+        List<Particle> bullets = new List<Particle> ();
+        List<Particle> destroyedBullets = new List<Particle> ();
 		TimeSpan bulletFired;
 		TimeSpan bulletFlightTime = new TimeSpan (0, 0, 3);
 
@@ -276,7 +276,7 @@ namespace helloWorld
             base.Update(gameTime);
         }
 
-		protected void DestroyAsteroid(Asteroid asteroid, Bullet bullet) {
+        protected void DestroyAsteroid(Asteroid asteroid, Particle bullet) {
 			destroyedAsteroids.Add (asteroid);
 			destroyedBullets.Add (bullet);
 
@@ -302,7 +302,7 @@ namespace helloWorld
 				return;
 			}
 
-			var bullet = new Bullet ()
+            var bullet = new Particle ()
             {
                 x = ship.x,
                 y = ship.y,

@@ -10,7 +10,7 @@ namespace helloWorld
 	{
 		public Thruster (Random rng, Texture2D texture, IScreenMovement movement)
 		{
-			particles = new List<Bullet> ();
+            particles = new List<Particle> ();
 			particleTime = new TimeSpan (0, 0, 0, 0, 500);
 			this.rng = rng;
 			this.texture = texture;
@@ -21,7 +21,7 @@ namespace helloWorld
 		protected Texture2D texture;
 		protected IScreenMovement movement;
 
-		protected List<Bullet> particles;
+		protected List<Particle> particles;
 		protected TimeSpan particleTime;
 
 		public double x { get; set; }
@@ -30,7 +30,7 @@ namespace helloWorld
 
 		public void Emit(GameTime gameTime) {
 			for (int i = 0; i < 15; i ++) {
-				var plume = new Bullet ();
+                var plume = new Particle ();
 				plume.x = x;
 				plume.y = y;
 				plume.angle = angle + (rng.NextDouble () * 1.5 - 0.75);

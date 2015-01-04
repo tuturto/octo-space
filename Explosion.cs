@@ -10,7 +10,7 @@ namespace helloWorld
 	{
 		public Explosion (Random rng, Texture2D texture, IScreenMovement movement)
 		{
-			particles = new List<Bullet> ();
+            particles = new List<Particle> ();
 
 			this.rng = rng;
 			this.texture = texture;
@@ -23,7 +23,7 @@ namespace helloWorld
 		protected Texture2D texture;
 		protected IScreenMovement movement;
 
-		protected List<Bullet> particles;
+        protected List<Particle> particles;
 
 		public double x { get; set; }
 		public double y { get; set; }
@@ -41,7 +41,7 @@ namespace helloWorld
 
 		private void SpawnShrapnel(GameTime gameTime) {
 			for (int i = 0; i < ParticleCount; i ++) {
-				var shrapnel = new Bullet ();
+                var shrapnel = new Particle ();
                 shrapnel.x = x;
                 shrapnel.y = y;
                 shrapnel.angle = rng.NextDouble () * 2 * Math.PI;

@@ -49,7 +49,7 @@ namespace helloWorld
 		public int phase { get; set; }
 	}
 
-	public class Bullet : Entity
+	public class Particle : Entity
 	{
 		public TimeSpan SpawnTime { get; set; }
         public TimeSpan LifeTime { get; set; }
