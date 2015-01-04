@@ -49,7 +49,7 @@ namespace helloWorld
                 shrapnel.dy = ParticleSpeed * Math.Sin (shrapnel.angle) * rng.NextDouble();
                 shrapnel.texture = texture;
                 shrapnel.SpawnTime = gameTime.TotalGameTime;
-                shrapnel.LifeTime = new TimeSpan (0, 0, 0, 0, rng.Next(750, 1500) );
+                shrapnel.LifeTime = ParticleLifeTime;
                 particles.Add (shrapnel);
 			}
 		}

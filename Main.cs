@@ -40,6 +40,7 @@ namespace helloWorld
 		Texture2D shipTexture, exhaustTexture;
 		Entity ship;
 
+        Texture2D shardTexture;
 		List<Texture2D> rockTextures = new List<Texture2D> ();
 		List<Asteroid> asteroids = new List<Asteroid> ();
 
@@ -106,7 +107,7 @@ namespace helloWorld
 			tempRock.y = y;
 			tempRock.dx = rng.NextDouble () * 2.0 - 1.0;
 			tempRock.dy = rng.NextDouble () * 2.0 - 1.0;
-			tempRock.dangle = rng.NextDouble () * 0.02;
+			tempRock.dangle = (rng.NextDouble () * 2 - 1) * 0.02;
 			tempRock.phase = 3;
 			tempRock.texture = rockTextures[tempRock.phase];
 			asteroids.Add (tempRock);
@@ -125,6 +126,8 @@ namespace helloWorld
 			shipTexture = Content.Load<Texture2D> ("ship.png");
 			bulletTexture = Content.Load<Texture2D> ("bullet.png");
 			exhaustTexture = Content.Load<Texture2D> ("exhaust.png");
+
+            shardTexture = Content.Load<Texture2D> ("shard.png");
 
 			rockTextures.Add (Content.Load<Texture2D> ("rock_1.png"));
 			rockTextures.Add (Content.Load<Texture2D> ("rock_2.png"));
@@ -216,7 +219,7 @@ namespace helloWorld
 					var asteroidCircle = new Circle (asteroidOrigin, asteroid.texture.Width / 2);
 
 					if (bulletCircle.Intersects (asteroidCircle)) {
-						DestroyAsteroid (asteroid, bullet);
+						DestroyAsteroid (asteroid, bullet, gameTime);
 					}
 				}
 			}
@@ -276,7 +279,7 @@ namespace helloWorld
             base.Update(gameTime);
         }
 
-        protected void DestroyAsteroid(Asteroid asteroid, Particle bullet) {
+        protected void DestroyAsteroid(Asteroid asteroid, Particle bullet, GameTime gameTime) {
 			destroyedAsteroids.Add (asteroid);
 			destroyedBullets.Add (bullet);
 
@@ -294,6 +297,18 @@ namespace helloWorld
 					newAsteroids.Add (newAsteroid);
 				}
 			}
+
+            var explosion = new Explosion (rng, bulletTexture, movement) {
+                ParticleCount = 10,
+                ParticleSpeed = 4,
+                ParticleLifeTime = new TimeSpan (0, 0, 0, 0, 250),
+                EmitterLifeTime = new TimeSpan(0, 0, 0, 0, 10),
+                x = bullet.x,
+                y = bullet.y
+            };
+
+            explosion.Emit (gameTime);
+            particles.Add (explosion);
 		}
 
 		protected void Shoot(GameTime gameTime) {
@@ -322,9 +337,9 @@ namespace helloWorld
 
 			var explosion = new Explosion (rng, bulletTexture, movement) {
                 ParticleCount = 15,
-                ParticleSpeed = 1,
-                ParticleLifeTime = new TimeSpan (0, 0, 0, 0, 1250),
-                EmitterLifeTime = new TimeSpan(0, 0, 0, 0, 150),
+                ParticleSpeed = 4,
+                ParticleLifeTime = new TimeSpan (0, 0, 0, 0, 750),
+                EmitterLifeTime = new TimeSpan(0, 0, 0, 0, 50),
 				x = ship.x,
 				y = ship.y
 			};
