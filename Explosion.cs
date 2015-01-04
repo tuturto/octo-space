@@ -41,15 +41,16 @@ namespace helloWorld
 
 		private void SpawnShrapnel(GameTime gameTime) {
 			for (int i = 0; i < ParticleCount; i ++) {
-				var sharpnel = new Bullet ();
-				sharpnel.x = x;
-				sharpnel.y = y;
-				sharpnel.angle = rng.NextDouble () * 2 * Math.PI;
-				sharpnel.dx = ParticleSpeed * Math.Cos (sharpnel.angle) * rng.NextDouble();
-                sharpnel.dy = ParticleSpeed * Math.Sin (sharpnel.angle) * rng.NextDouble();
-				sharpnel.texture = texture;
-				sharpnel.SpawnTime = gameTime.TotalGameTime;
-				particles.Add (sharpnel);
+				var shrapnel = new Bullet ();
+                shrapnel.x = x;
+                shrapnel.y = y;
+                shrapnel.angle = rng.NextDouble () * 2 * Math.PI;
+                shrapnel.dx = ParticleSpeed * Math.Cos (shrapnel.angle) * rng.NextDouble();
+                shrapnel.dy = ParticleSpeed * Math.Sin (shrapnel.angle) * rng.NextDouble();
+                shrapnel.texture = texture;
+                shrapnel.SpawnTime = gameTime.TotalGameTime;
+                shrapnel.LifeTime = new TimeSpan (0, 0, 0, 0, rng.Next(750, 1500) );
+                particles.Add (shrapnel);
 			}
 		}
 
@@ -64,7 +65,7 @@ namespace helloWorld
 				SpawnShrapnel (gameTime);
 			}
 
-			particles.RemoveAll (x => gameTime.TotalGameTime - x.SpawnTime > ParticleLifeTime);
+			particles.RemoveAll (x => gameTime.TotalGameTime - x.SpawnTime > x.LifeTime);
 
 			foreach (var particle in particles) {
 				movement.MoveEntity (particle);

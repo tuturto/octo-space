@@ -302,14 +302,17 @@ namespace helloWorld
 				return;
 			}
 
-			var bullet = new Bullet ();
-			bullet.x = ship.x;
-			bullet.y = ship.y;
-			bullet.angle = ship.angle;
-			bullet.dx = Math.Cos (bullet.angle) * 4;
-			bullet.dy = Math.Sin (bullet.angle) * 4;
-			bullet.texture = bulletTexture;
-			bullet.SpawnTime = gameTime.TotalGameTime;
+			var bullet = new Bullet ()
+            {
+                x = ship.x,
+                y = ship.y,
+                angle = ship.angle,
+                dx = Math.Cos (ship.angle) * 4,
+                dy = Math.Sin (ship.angle) * 4,
+                texture = bulletTexture,
+                SpawnTime = gameTime.TotalGameTime
+            };
+
 			bullets.Add (bullet);
 
 			bulletFired = gameTime.TotalGameTime;
@@ -319,7 +322,7 @@ namespace helloWorld
 
 			var explosion = new Explosion (rng, bulletTexture, movement) {
                 ParticleCount = 15,
-                ParticleSpeed = 3,
+                ParticleSpeed = 1,
                 ParticleLifeTime = new TimeSpan (0, 0, 0, 0, 1250),
                 EmitterLifeTime = new TimeSpan(0, 0, 0, 0, 150),
 				x = ship.x,

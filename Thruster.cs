@@ -38,6 +38,7 @@ namespace helloWorld
 				plume.dy = Math.Sin (plume.angle) * rng.NextDouble();
 				plume.texture = texture;
 				plume.SpawnTime = gameTime.TotalGameTime;
+                plume.LifeTime = new TimeSpan (0, 0, 0, 0, rng.Next(250, 1000));
 				particles.Add (plume);
 			}
 		}
@@ -49,7 +50,7 @@ namespace helloWorld
 		}
 
 		public void Update(GameTime gameTime) {
-			particles.RemoveAll (x => gameTime.TotalGameTime - x.SpawnTime > particleTime);
+			particles.RemoveAll (x => gameTime.TotalGameTime - x.SpawnTime > x.LifeTime);
 
 			foreach (var particle in particles) {
 				movement.MoveEntity (particle);
