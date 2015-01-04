@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework;
@@ -26,6 +27,7 @@ namespace helloWorld
 
 		GameState state = GameState.MainMenu;
 		int lives = 3;
+        int score = 0;
 
 		double turnSpeed = 0.1;
 		int screenWidth = 800;
@@ -40,7 +42,6 @@ namespace helloWorld
 		Texture2D shipTexture, exhaustTexture;
 		Entity ship;
 
-        Texture2D shardTexture;
 		List<Texture2D> rockTextures = new List<Texture2D> ();
 		List<Asteroid> asteroids = new List<Asteroid> ();
 
@@ -56,6 +57,8 @@ namespace helloWorld
 		Thruster thruster;
 
 		List<IParticleEmitter> particles = new List<IParticleEmitter> ();
+
+        Dictionary<Char, Texture2D> numbers = new Dictionary<Char, Texture2D> ();
 
 		Random rng = new Random();
 
@@ -127,8 +130,6 @@ namespace helloWorld
 			bulletTexture = Content.Load<Texture2D> ("bullet.png");
 			exhaustTexture = Content.Load<Texture2D> ("exhaust.png");
 
-            shardTexture = Content.Load<Texture2D> ("shard.png");
-
 			rockTextures.Add (Content.Load<Texture2D> ("rock_1.png"));
 			rockTextures.Add (Content.Load<Texture2D> ("rock_2.png"));
 			rockTextures.Add (Content.Load<Texture2D> ("rock_3.png"));
@@ -139,6 +140,17 @@ namespace helloWorld
 			starTextures.Add(Content.Load<Texture2D> ("star_1.png"));
 			starTextures.Add(Content.Load<Texture2D> ("star_2.png"));
 			starTextures.Add(Content.Load<Texture2D> ("star_3.png"));
+
+            numbers ['0'] = Content.Load<Texture2D> ("0.png");
+            numbers ['1'] = Content.Load<Texture2D> ("1.png");
+            numbers ['2'] = Content.Load<Texture2D> ("2.png");
+            numbers ['3'] = Content.Load<Texture2D> ("3.png");
+            numbers ['4'] = Content.Load<Texture2D> ("4.png");
+            numbers ['5'] = Content.Load<Texture2D> ("5.png");
+            numbers ['6'] = Content.Load<Texture2D> ("6.png");
+            numbers ['7'] = Content.Load<Texture2D> ("7.png");
+            numbers ['8'] = Content.Load<Texture2D> ("8.png");
+            numbers ['9'] = Content.Load<Texture2D> ("9.png");
 
 			BackgroundMusic = Content.Load<Song> ("bg.wav");
 
@@ -197,6 +209,7 @@ namespace helloWorld
 					spawnRocks ();
 					SpawnShip ();
 					lives = 3;
+                    score = 0;
 					state = GameState.Game;
 				}
 			}
@@ -280,7 +293,9 @@ namespace helloWorld
         }
 
         protected void DestroyAsteroid(Asteroid asteroid, Particle bullet, GameTime gameTime) {
-			destroyedAsteroids.Add (asteroid);
+            score++;
+
+            destroyedAsteroids.Add (asteroid);
 			destroyedBullets.Add (bullet);
 
 			if (asteroid.phase > 0) {
@@ -433,6 +448,24 @@ namespace helloWorld
 				                  effect: SpriteEffects.None,
 				                  depth: 1);
 			}
+
+            var scoreStr = score.ToString (CultureInfo.InvariantCulture);
+            int index = 0;
+            foreach (var chr in scoreStr) {
+                location = new Vector2 (25 * index + 85, 12);
+                sourceRectangle = new Rectangle (0, 0, 25, 25);
+                origin = new Vector2 (0, 0);
+                spriteBatch.Draw (texture: numbers[chr],
+                                  position: location,
+                                  sourceRectangle: sourceRectangle,
+                                  color: Color.White,
+                                  rotation: 0.0f,
+                                  origin: origin,
+                                  scale: 1.0f,
+                                  effect: SpriteEffects.None,
+                                  depth: 1);
+                index++;
+            }
 
 			spriteBatch.End();
             //TODO: Drawing on the edge (ie. two blits instead of one)
